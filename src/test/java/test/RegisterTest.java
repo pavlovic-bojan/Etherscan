@@ -2,6 +2,7 @@ package test;
 
 import base.BaseTest;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import page.*;
 import java.util.Random;
@@ -42,9 +43,10 @@ public class RegisterTest extends BaseTest {
 
     //Positive Test
 
-    //For next 2 test you must solve captcha manually and every test is on hold for 10 seconds for you to resolve captcha
+    //For next 3 test you must solve captcha manually and every test is on hold for 10 seconds for you to resolve captcha
 
     @Test
+    @Order(1)
     public void successfulRegistrationTest() throws Exception{
         registerPage.userInputField(username);
         registerPage.emailInputField(email);
@@ -60,6 +62,7 @@ public class RegisterTest extends BaseTest {
     }
 
     @Test
+    @Order(3)
     public void attemptToRegisterWhenTheUserNameInUse() throws Exception{
         registerPage.userInputField("dispatch");
         registerPage.emailInputField(email);
@@ -73,11 +76,26 @@ public class RegisterTest extends BaseTest {
         assertTrue(registerPage.errorUserNameUseMethod());
         assertEquals(userNameUseErrorMessages,registerPage.errorUserNameUseMethodText());
     }
+    @Test
+    @Order(2)
+    public void attemptToRegisterWhenTheNewsLetterIsChecked(){
+        registerPage.userInputField(username);
+        registerPage.emailInputField(email);
+        registerPage.email2InputField(email);
+        registerPage.passwordInputField(password);
+        registerPage.password2InputField(password);
+        registerPage.checkBoxMy();
+        registerPage.checkBoxNewsLetter();
+        registerPage.buttonRegister();
+        assertTrue(registerPage.errorCaptchaMetod());
+        assertEquals(captchaErrorMessages,registerPage.errorCaptchaMetodText());
+    }
 
     //Negative Test
 
     @Test
-    public void attemptToRegisterAllFormeFieldIsEmpty(){
+    @Order(4)
+    public void attemptToRegisterAllFormFieldIsEmpty(){
         registerPage.buttonRegister();
         assertTrue(registerPage.errorUserNameMethod());
         assertEquals(userNameErrorMessages,registerPage.errorUserNameMethodText());
@@ -94,6 +112,7 @@ public class RegisterTest extends BaseTest {
     }
 
     @Test
+    @Order(5)
     public void attemptToRegisterWhenTheUserNameFieldIsEmpty(){
         registerPage.userInputField("");
         registerPage.emailInputField(email);
@@ -107,8 +126,8 @@ public class RegisterTest extends BaseTest {
     }
 
     @Test
+    @Order(6)
     public void attemptToRegisterWhenTheUserNameShort(){
-
         registerPage.userInputField("men");
         registerPage.emailInputField(email);
         registerPage.email2InputField(email);
@@ -121,6 +140,7 @@ public class RegisterTest extends BaseTest {
     }
 
     @Test
+    @Order(7)
     public void attemptToRegisterWhenTheUserNameNotAlphanumeric(){
         registerPage.userInputField("This is a long username of ->31");
         registerPage.emailInputField(email);
@@ -134,6 +154,7 @@ public class RegisterTest extends BaseTest {
     }
 
     @Test
+    @Order(8)
     public void attemptToRegisterWhenTheEmailFieldIsEmpty(){
         registerPage.userInputField(username);
         registerPage.emailInputField("");
@@ -147,6 +168,7 @@ public class RegisterTest extends BaseTest {
     }
 
     @Test
+    @Order(9)
     public void attemptToRegisterWhenTheEmailIsShort(){
         registerPage.userInputField(username);
         registerPage.emailInputField("2@g.");
@@ -160,6 +182,7 @@ public class RegisterTest extends BaseTest {
     }
 
     @Test
+    @Order(10)
     public void attemptToRegisterWhenTheEmailIsInvalid(){
         registerPage.userInputField(username);
         registerPage.emailInputField("23g.");
@@ -172,6 +195,7 @@ public class RegisterTest extends BaseTest {
         assertEquals(emailErrorMessages,registerPage.errorEmailMetodText());
     }
     @Test
+    @Order(11)
     public void attemptToRegisterWhenTheEmailNotMatching(){
         registerPage.userInputField(username);
         registerPage.emailInputField(email);
@@ -185,6 +209,7 @@ public class RegisterTest extends BaseTest {
     }
 
     @Test
+    @Order(12)
     public void attemptToRegisterWhenThePasswordShort(){
         registerPage.userInputField(username);
         registerPage.emailInputField(email);
@@ -198,6 +223,7 @@ public class RegisterTest extends BaseTest {
     }
 
     @Test
+    @Order(13)
     public void attemptToRegisterWhenThePasswordNotMatching(){
         registerPage.userInputField(username);
         registerPage.emailInputField(email);
@@ -211,6 +237,7 @@ public class RegisterTest extends BaseTest {
     }
 
     @Test
+    @Order(14)
     public void attemptToRegisterWhenThePasswordOnlyNumbers(){
         registerPage.userInputField(username);
         registerPage.emailInputField(email);
@@ -224,6 +251,7 @@ public class RegisterTest extends BaseTest {
     }
 
     @Test
+    @Order(15)
     public void attemptToRegisterWhenThePasswordOnlyLowercaseLetters(){
         registerPage.userInputField(username);
         registerPage.emailInputField(email);
@@ -237,6 +265,7 @@ public class RegisterTest extends BaseTest {
     }
 
     @Test
+    @Order(16)
     public void attemptToRegisterWhenThePasswordOnlyCapitalLetters(){
         registerPage.userInputField(username);
         registerPage.emailInputField(email);
@@ -250,6 +279,7 @@ public class RegisterTest extends BaseTest {
     }
 
     @Test
+    @Order(17)
     public void attemptToRegisterWhenThePasswordOnlySpecialCharacters(){
         registerPage.userInputField(username);
         registerPage.emailInputField(email);
@@ -263,6 +293,7 @@ public class RegisterTest extends BaseTest {
     }
 
     @Test
+    @Order(18)
     public void attemptToRegisterWhenThePasswordLettersNumbersSpecialCharacters(){
         registerPage.userInputField(username);
         registerPage.emailInputField(email);
@@ -276,6 +307,7 @@ public class RegisterTest extends BaseTest {
     }
 
     @Test
+    @Order(19)
     public void attemptToRegisterWhenThePasswordFieldIsEmpty(){
         registerPage.userInputField(username);
         registerPage.emailInputField(email);
@@ -289,6 +321,7 @@ public class RegisterTest extends BaseTest {
     }
 
     @Test
+    @Order(20)
     public void attemptToRegisterWhenTheTermsIsNotChecked(){
         registerPage.userInputField(username);
         registerPage.emailInputField(email);
@@ -298,20 +331,6 @@ public class RegisterTest extends BaseTest {
         registerPage.buttonRegister();
         assertTrue(registerPage.errorTermsAndConditionsMetod());
         assertEquals(termsErrorMessages,registerPage.errorTermsAndConditionsMetodText());
-    }
-
-    @Test
-    public void attemptToRegisterWhenTheNewsLerrerIsChecked(){
-        registerPage.userInputField(username);
-        registerPage.emailInputField(email);
-        registerPage.email2InputField(email);
-        registerPage.passwordInputField(password);
-        registerPage.password2InputField(password);
-        registerPage.checkBoxMy();
-        registerPage.checkBoxNewsLetter();
-        registerPage.buttonRegister();
-        assertTrue(registerPage.errorCaptchaMetod());
-        assertEquals(captchaErrorMessages,registerPage.errorCaptchaMetodText());
     }
 
 }

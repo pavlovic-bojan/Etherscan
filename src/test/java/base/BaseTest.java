@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -21,9 +22,12 @@ public class BaseTest {
     @BeforeEach
     public void setUp() {
 
-        WebDriverManager.chromedriver().setup();
+        ChromeOptions option = new ChromeOptions();
+        option.addArguments("--remote-allow-origins=*");
 
-        driver = new ChromeDriver();
+        WebDriverManager.chromedriver().setup();
+        driver = new ChromeDriver(option);
+
         wdWait = new WebDriverWait(driver, Duration.ofSeconds(30));
         actions = new Actions(driver);
 
@@ -35,8 +39,7 @@ public class BaseTest {
 
     @AfterEach
     public void tearDown() {
-        //TODO AFTER COMPLETION OF THE PROJECT, UNCOMMENT THE LINE BELOW
-        //driver.quit();
+        driver.quit();
     }
 
 }
