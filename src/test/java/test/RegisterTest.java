@@ -2,8 +2,8 @@ package test;
 
 import base.BaseTest;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.Keys;
 import page.*;
 import java.util.Random;
 
@@ -12,12 +12,21 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RegisterTest extends BaseTest {
 
+    EmaiPagelMailinator emaiPagelMailinator;
+    HomePageMailinator homePageMailinator;
+    InboxPageMailinator inboxPageMailinator;
+    MyAccountPage myAccountPage;
     RegisterPage registerPage;
+    SharedMethods sharedMethods;
+    SignInPage signInPage;
+    SuccessfulConfirmEmailPage successfulConfirmEmailPage;
+
     Random random = new Random();
     String username = "someCreativeQAUserName" + random.nextInt(999999);
     String email = username + "@mailinator.com";
     String password = "12345678";
     String verifyYourEmailMessages = "Verify Your Email";
+    String successfulConfirmEmail = "Welcome to Etherscan!";
     String userNameErrorMessages = "Please enter Username.";
     String userNameUseErrorMessages = "Sorry! The username you entered is already in use.";
     String userNameShortErrorMessages = "Please enter at least 5 characters.";
@@ -38,100 +47,138 @@ public class RegisterTest extends BaseTest {
 
     @BeforeEach
     public void setUpPages(){
+        emaiPagelMailinator = new EmaiPagelMailinator();
+        homePageMailinator = new HomePageMailinator();
+        inboxPageMailinator = new InboxPageMailinator();
+        myAccountPage = new MyAccountPage();
         registerPage = new RegisterPage();
+        sharedMethods = new SharedMethods();
+        signInPage = new SignInPage();
+        successfulConfirmEmailPage = new SuccessfulConfirmEmailPage();
     }
 
     //Positive Test
 
-    //For next 3 test you must solve captcha manually and every test is on hold for 10 seconds for you to resolve captcha
+    //For next 2 test you must solve captcha manually and every test is on hold for 10 seconds for you to resolve captcha
 
     @Test
-    @Order(1)
     public void successfulRegistrationTest() throws Exception{
-        registerPage.userInputField(username);
-        registerPage.emailInputField(email);
+        sharedMethods.userInputField(username);
+        sharedMethods.emailInputField(email);
         registerPage.email2InputField(email);
-        registerPage.passwordInputField(password);
+        sharedMethods.passwordInputField(password);
         registerPage.password2InputField(password);
         registerPage.checkBoxMy();
-        registerPage.captchaRegister();
+        sharedMethods.captchaRegister();
         Thread.sleep(10000);
         registerPage.buttonRegister();
-        assertTrue(registerPage.errorUserNameUseMethod());
-        assertEquals(userNameUseErrorMessages,registerPage.errorUserNameUseMethodText());
+        assertTrue(registerPage.verifyYourEmailMethod());
+        assertEquals(verifyYourEmailMessages,registerPage.verifyYourEmailMethodText());
+        driver.get(mailinatorLink);
+        homePageMailinator.emailInputFieldSendKeys(email);
+        homePageMailinator.emailInputFieldSendKeyboardKeys(Keys.ENTER);
+        inboxPageMailinator.verifyEmailClick();
+        emaiPagelMailinator.iframeHtmlMsgBodySwitchWithWait();
+        emaiPagelMailinator.activateAccountClick();
+        sharedMethods.switchToNewTab(2,1);
+        assertTrue(successfulConfirmEmailPage.confirmYourEmailMethod());
+        assertEquals(successfulConfirmEmail,successfulConfirmEmailPage.confirmYourEmailMethodText());
+        successfulConfirmEmailPage.signInClickMethod();
+        sharedMethods.userInputField(username);
+        sharedMethods.passwordInputField(password);
+        sharedMethods.captchaRegister();
+        Thread.sleep(10000);
+        signInPage.buttonLoginClick();
+        assertTrue(myAccountPage.userNameMethod());
+        assertEquals(username,myAccountPage.userNameMethodText());
     }
 
     @Test
-    @Order(3)
-    public void attemptToRegisterWhenTheUserNameInUse() throws Exception{
-        registerPage.userInputField("dispatch");
-        registerPage.emailInputField(email);
+    public void attemptToRegisterWhenTheNewsLetterIsChecked() throws Exception{
+        sharedMethods.userInputField(username);
+        sharedMethods.emailInputField(email);
         registerPage.email2InputField(email);
-        registerPage.passwordInputField(password);
-        registerPage.password2InputField(password);
-        registerPage.checkBoxMy();
-        registerPage.captchaRegister();
-        Thread.sleep(10000);
-        registerPage.buttonRegister();
-        assertTrue(registerPage.errorUserNameUseMethod());
-        assertEquals(userNameUseErrorMessages,registerPage.errorUserNameUseMethodText());
-    }
-    @Test
-    @Order(2)
-    public void attemptToRegisterWhenTheNewsLetterIsChecked(){
-        registerPage.userInputField(username);
-        registerPage.emailInputField(email);
-        registerPage.email2InputField(email);
-        registerPage.passwordInputField(password);
+        sharedMethods.passwordInputField(password);
         registerPage.password2InputField(password);
         registerPage.checkBoxMy();
         registerPage.checkBoxNewsLetter();
+        sharedMethods.captchaRegister();
+        Thread.sleep(10000);
         registerPage.buttonRegister();
-        assertTrue(registerPage.errorCaptchaMetod());
-        assertEquals(captchaErrorMessages,registerPage.errorCaptchaMetodText());
+        assertTrue(registerPage.verifyYourEmailMethod());
+        assertEquals(verifyYourEmailMessages,registerPage.verifyYourEmailMethodText());
+        driver.get(mailinatorLink);
+        homePageMailinator.emailInputFieldSendKeys(email);
+        homePageMailinator.emailInputFieldSendKeyboardKeys(Keys.ENTER);
+        inboxPageMailinator.verifyEmailClick();
+        emaiPagelMailinator.iframeHtmlMsgBodySwitchWithWait();
+        emaiPagelMailinator.activateAccountClick();
+        sharedMethods.switchToNewTab(2,1);
+        assertTrue(successfulConfirmEmailPage.confirmYourEmailMethod());
+        assertEquals(successfulConfirmEmail,successfulConfirmEmailPage.confirmYourEmailMethodText());
+        successfulConfirmEmailPage.signInClickMethod();
+        sharedMethods.userInputField(username);
+        sharedMethods.passwordInputField(password);
+        sharedMethods.captchaRegister();
+        Thread.sleep(10000);
+        signInPage.buttonLoginClick();
+        assertTrue(myAccountPage.userNameMethod());
+        assertEquals(username,myAccountPage.userNameMethodText());
     }
 
     //Negative Test
 
     @Test
-    @Order(4)
-    public void attemptToRegisterAllFormFieldIsEmpty(){
+    public void attemptToRegisterWhenTheUserNameInUse() throws Exception{
+        sharedMethods.userInputField("dispatch");
+        sharedMethods.emailInputField(email);
+        registerPage.email2InputField(email);
+        sharedMethods.passwordInputField(password);
+        registerPage.password2InputField(password);
+        registerPage.checkBoxMy();
+        sharedMethods.captchaRegister();
+        Thread.sleep(10000);
         registerPage.buttonRegister();
-        assertTrue(registerPage.errorUserNameMethod());
-        assertEquals(userNameErrorMessages,registerPage.errorUserNameMethodText());
-        assertTrue(registerPage.errorEmailMetod());
-        assertEquals(emailErrorMessages,registerPage.errorEmailMetodText());
-        assertTrue(registerPage.errorEmailReEnterMetod());
-        assertEquals(emailReEnterErrorMessages,registerPage.errorEmailReEnterMetodText());
-        assertTrue(registerPage.errorPasswordMetod());
-        assertEquals(passwordErrorMessages,registerPage.errorPasswordMetodText());
-        assertTrue(registerPage.errorPasswordShortMetod());
-        assertEquals(passwordShortErrorMessages,registerPage.errorPasswordShortMetodText());
-        assertTrue(registerPage.errorTermsAndConditionsMetod());
-        assertEquals(termsErrorMessages,registerPage.errorTermsAndConditionsMetodText());
+        assertTrue(registerPage.errorUserNameUseMethod());
+        assertEquals(userNameUseErrorMessages,registerPage.errorUserNameUseMethodText());
     }
 
     @Test
-    @Order(5)
+    public void attemptToRegisterAllFormFieldIsEmpty(){
+        registerPage.buttonRegister();
+        assertTrue(sharedMethods.errorUserNameMethod());
+        assertEquals(userNameErrorMessages,sharedMethods.errorUserNameMethodText());
+        assertTrue(sharedMethods.errorEmailMetod());
+        assertEquals(emailErrorMessages,sharedMethods.errorEmailMetodText());
+        assertTrue(registerPage.errorEmailReEnterMetod());
+        assertEquals(emailReEnterErrorMessages,registerPage.errorEmailReEnterMetodText());
+        assertTrue(sharedMethods.errorPasswordMetod());
+        assertEquals(passwordErrorMessages,sharedMethods.errorPasswordMetodText());
+        assertTrue(sharedMethods.errorPasswordShortMetod());
+        assertEquals(passwordShortErrorMessages,sharedMethods.errorPasswordShortMetodText());
+        assertTrue(sharedMethods.errorTermsAndConditionsMetod());
+        assertEquals(termsErrorMessages,sharedMethods.errorTermsAndConditionsMetodText());
+    }
+
+    @Test
     public void attemptToRegisterWhenTheUserNameFieldIsEmpty(){
-        registerPage.userInputField("");
-        registerPage.emailInputField(email);
+        sharedMethods.userInputField("");
+        sharedMethods.emailInputField(email);
         registerPage.email2InputField(email);
-        registerPage.passwordInputField(password);
+        sharedMethods.passwordInputField(password);
         registerPage.password2InputField(password);
         registerPage.checkBoxMy();
         registerPage.buttonRegister();
-        assertTrue(registerPage.errorUserNameMethod());
-        assertEquals(userNameErrorMessages,registerPage.errorUserNameMethodText());
+        assertTrue(sharedMethods.errorUserNameMethod());
+        assertEquals(userNameErrorMessages,sharedMethods.errorUserNameMethodText());
     }
 
     @Test
-    @Order(6)
     public void attemptToRegisterWhenTheUserNameShort(){
-        registerPage.userInputField("men");
-        registerPage.emailInputField(email);
+        sharedMethods.userInputField("men");
+        sharedMethods.emailInputField(email);
         registerPage.email2InputField(email);
-        registerPage.passwordInputField(password);
+        sharedMethods.passwordInputField(password);
         registerPage.password2InputField(password);
         registerPage.checkBoxMy();
         registerPage.buttonRegister();
@@ -140,12 +187,11 @@ public class RegisterTest extends BaseTest {
     }
 
     @Test
-    @Order(7)
     public void attemptToRegisterWhenTheUserNameNotAlphanumeric(){
-        registerPage.userInputField("This is a long username of ->31");
-        registerPage.emailInputField(email);
+        sharedMethods.userInputField("This is a long username of ->31");
+        sharedMethods.emailInputField(email);
         registerPage.email2InputField(email);
-        registerPage.passwordInputField(password);
+        sharedMethods.passwordInputField(password);
         registerPage.password2InputField(password);
         registerPage.checkBoxMy();
         registerPage.buttonRegister();
@@ -154,53 +200,49 @@ public class RegisterTest extends BaseTest {
     }
 
     @Test
-    @Order(8)
     public void attemptToRegisterWhenTheEmailFieldIsEmpty(){
-        registerPage.userInputField(username);
-        registerPage.emailInputField("");
+        sharedMethods.userInputField(username);
+        sharedMethods.emailInputField("");
         registerPage.email2InputField(email);
-        registerPage.passwordInputField(password);
+        sharedMethods.passwordInputField(password);
         registerPage.password2InputField(password);
         registerPage.checkBoxMy();
         registerPage.buttonRegister();
-        assertTrue(registerPage.errorEmailMetod());
-        assertEquals(emailErrorMessages,registerPage.errorEmailMetodText());
+        assertTrue(sharedMethods.errorEmailMetod());
+        assertEquals(emailErrorMessages,sharedMethods.errorEmailMetodText());
     }
 
     @Test
-    @Order(9)
     public void attemptToRegisterWhenTheEmailIsShort(){
-        registerPage.userInputField(username);
-        registerPage.emailInputField("2@g.");
+        sharedMethods.userInputField(username);
+        sharedMethods.emailInputField("2@g.");
         registerPage.email2InputField("2@g.");
-        registerPage.passwordInputField(password);
+        sharedMethods.passwordInputField(password);
         registerPage.password2InputField(password);
         registerPage.checkBoxMy();
         registerPage.buttonRegister();
-        assertTrue(registerPage.errorEmailMetod());
-        assertEquals(emailErrorMessages,registerPage.errorEmailMetodText());
+        assertTrue(sharedMethods.errorEmailMetod());
+        assertEquals(emailErrorMessages,sharedMethods.errorEmailMetodText());
     }
 
     @Test
-    @Order(10)
     public void attemptToRegisterWhenTheEmailIsInvalid(){
-        registerPage.userInputField(username);
-        registerPage.emailInputField("23g.");
+        sharedMethods.userInputField(username);
+        sharedMethods.emailInputField("23g.");
         registerPage.email2InputField("23g.");
-        registerPage.passwordInputField(password);
+        sharedMethods.passwordInputField(password);
         registerPage.password2InputField(password);
         registerPage.checkBoxMy();
         registerPage.buttonRegister();
-        assertTrue(registerPage.errorEmailMetod());
-        assertEquals(emailErrorMessages,registerPage.errorEmailMetodText());
+        assertTrue(sharedMethods.errorEmailMetod());
+        assertEquals(emailErrorMessages,sharedMethods.errorEmailMetodText());
     }
     @Test
-    @Order(11)
     public void attemptToRegisterWhenTheEmailNotMatching(){
-        registerPage.userInputField(username);
-        registerPage.emailInputField(email);
+        sharedMethods.userInputField(username);
+        sharedMethods.emailInputField(email);
         registerPage.email2InputField("2@g.");
-        registerPage.passwordInputField(password);
+        sharedMethods.passwordInputField(password);
         registerPage.password2InputField(password);
         registerPage.checkBoxMy();
         registerPage.buttonRegister();
@@ -209,128 +251,119 @@ public class RegisterTest extends BaseTest {
     }
 
     @Test
-    @Order(12)
     public void attemptToRegisterWhenThePasswordShort(){
-        registerPage.userInputField(username);
-        registerPage.emailInputField(email);
+        sharedMethods.userInputField(username);
+        sharedMethods.emailInputField(email);
         registerPage.email2InputField(email);
-        registerPage.passwordInputField("1234567");
+        sharedMethods.passwordInputField("1234567");
         registerPage.password2InputField("1234567");
         registerPage.checkBoxMy();
         registerPage.buttonRegister();
-        assertTrue(registerPage.errorPasswordShortMetod());
-        assertEquals(passwordShortErrorMessages,registerPage.errorPasswordShortMetodText());
+        assertTrue(sharedMethods.errorPasswordShortMetod());
+        assertEquals(passwordShortErrorMessages,sharedMethods.errorPasswordShortMetodText());
     }
 
     @Test
-    @Order(13)
     public void attemptToRegisterWhenThePasswordNotMatching(){
-        registerPage.userInputField(username);
-        registerPage.emailInputField(email);
+        sharedMethods.userInputField(username);
+        sharedMethods.emailInputField(email);
         registerPage.email2InputField(email);
-        registerPage.passwordInputField("1234567a");
+        sharedMethods.passwordInputField("1234567a");
         registerPage.password2InputField(password);
         registerPage.checkBoxMy();
         registerPage.buttonRegister();
-        assertTrue(registerPage.errorPasswordMatchMetod());
-        assertEquals(passwordMatchErrorMessages,registerPage.errorPasswordMatchMetodText());
+        assertTrue(sharedMethods.errorPasswordMatchMetod());
+        assertEquals(passwordMatchErrorMessages,sharedMethods.errorPasswordMatchMetodText());
     }
 
     @Test
-    @Order(14)
     public void attemptToRegisterWhenThePasswordOnlyNumbers(){
-        registerPage.userInputField(username);
-        registerPage.emailInputField(email);
+        sharedMethods.userInputField(username);
+        sharedMethods.emailInputField(email);
         registerPage.email2InputField(email);
-        registerPage.passwordInputField(password);
+        sharedMethods.passwordInputField(password);
         registerPage.password2InputField(password);
         registerPage.checkBoxMy();
         registerPage.buttonRegister();
-        assertTrue(registerPage.errorCaptchaMetod());
-        assertEquals(captchaErrorMessages,registerPage.errorCaptchaMetodText());
+        assertTrue(sharedMethods.errorCaptchaMetod());
+        assertEquals(captchaErrorMessages,sharedMethods.errorCaptchaMetodText());
     }
 
     @Test
-    @Order(15)
     public void attemptToRegisterWhenThePasswordOnlyLowercaseLetters(){
-        registerPage.userInputField(username);
-        registerPage.emailInputField(email);
+        sharedMethods.userInputField(username);
+        sharedMethods.emailInputField(email);
         registerPage.email2InputField(email);
-        registerPage.passwordInputField("qwertyui");
+        sharedMethods.passwordInputField("qwertyui");
         registerPage.password2InputField("qwertyui");
         registerPage.checkBoxMy();
         registerPage.buttonRegister();
-        assertTrue(registerPage.errorCaptchaMetod());
-        assertEquals(captchaErrorMessages,registerPage.errorCaptchaMetodText());
+        assertTrue(sharedMethods.errorCaptchaMetod());
+        assertEquals(captchaErrorMessages,sharedMethods.errorCaptchaMetodText());
     }
 
     @Test
-    @Order(16)
     public void attemptToRegisterWhenThePasswordOnlyCapitalLetters(){
-        registerPage.userInputField(username);
-        registerPage.emailInputField(email);
+        sharedMethods.userInputField(username);
+        sharedMethods.emailInputField(email);
         registerPage.email2InputField(email);
-        registerPage.passwordInputField("QWERTYUI");
+        sharedMethods.passwordInputField("QWERTYUI");
         registerPage.password2InputField("QWERTYUI");
         registerPage.checkBoxMy();
         registerPage.buttonRegister();
-        assertTrue(registerPage.errorCaptchaMetod());
-        assertEquals(captchaErrorMessages,registerPage.errorCaptchaMetodText());
+        assertTrue(sharedMethods.errorCaptchaMetod());
+        assertEquals(captchaErrorMessages,sharedMethods.errorCaptchaMetodText());
     }
 
     @Test
-    @Order(17)
     public void attemptToRegisterWhenThePasswordOnlySpecialCharacters(){
-        registerPage.userInputField(username);
-        registerPage.emailInputField(email);
+        sharedMethods.userInputField(username);
+        sharedMethods.emailInputField(email);
         registerPage.email2InputField(email);
-        registerPage.passwordInputField("!@#$%^&*");
+        sharedMethods.passwordInputField("!@#$%^&*");
         registerPage.password2InputField("!@#$%^&*");
         registerPage.checkBoxMy();
         registerPage.buttonRegister();
-        assertTrue(registerPage.errorCaptchaMetod());
-        assertEquals(captchaErrorMessages,registerPage.errorCaptchaMetodText());
+        assertTrue(sharedMethods.errorCaptchaMetod());
+        assertEquals(captchaErrorMessages,sharedMethods.errorCaptchaMetodText());
     }
 
     @Test
-    @Order(18)
     public void attemptToRegisterWhenThePasswordLettersNumbersSpecialCharacters(){
-        registerPage.userInputField(username);
-        registerPage.emailInputField(email);
+        sharedMethods.userInputField(username);
+        sharedMethods.emailInputField(email);
         registerPage.email2InputField(email);
-        registerPage.passwordInputField("Pas123%^&*");
+        sharedMethods.passwordInputField("Pas123%^&*");
         registerPage.password2InputField("Pas123%^&*");
         registerPage.checkBoxMy();
         registerPage.buttonRegister();
-        assertTrue(registerPage.errorCaptchaMetod());
-        assertEquals(captchaErrorMessages,registerPage.errorCaptchaMetodText());
+        assertTrue(sharedMethods.errorCaptchaMetod());
+        assertEquals(captchaErrorMessages,sharedMethods.errorCaptchaMetodText());
     }
 
     @Test
-    @Order(19)
     public void attemptToRegisterWhenThePasswordFieldIsEmpty(){
-        registerPage.userInputField(username);
-        registerPage.emailInputField(email);
+        sharedMethods.userInputField(username);
+        sharedMethods.emailInputField(email);
         registerPage.email2InputField(email);
-        registerPage.passwordInputField("");
+        sharedMethods.passwordInputField("");
         registerPage.password2InputField("");
         registerPage.checkBoxMy();
         registerPage.buttonRegister();
-        assertTrue(registerPage.errorPasswordMetod());
-        assertEquals(passwordErrorMessages,registerPage.errorPasswordMetodText());
+        assertTrue(sharedMethods.errorPasswordMetod());
+        assertEquals(passwordErrorMessages,sharedMethods.errorPasswordMetodText());
     }
 
     @Test
-    @Order(20)
     public void attemptToRegisterWhenTheTermsIsNotChecked(){
-        registerPage.userInputField(username);
-        registerPage.emailInputField(email);
+        sharedMethods.userInputField(username);
+        sharedMethods.emailInputField(email);
         registerPage.email2InputField(email);
-        registerPage.passwordInputField(password);
+        sharedMethods.passwordInputField(password);
         registerPage.password2InputField(password);
         registerPage.buttonRegister();
-        assertTrue(registerPage.errorTermsAndConditionsMetod());
-        assertEquals(termsErrorMessages,registerPage.errorTermsAndConditionsMetodText());
+        assertTrue(sharedMethods.errorTermsAndConditionsMetod());
+        assertEquals(termsErrorMessages,sharedMethods.errorTermsAndConditionsMetodText());
     }
 
 }
