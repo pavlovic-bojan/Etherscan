@@ -1,7 +1,7 @@
 # Etherscan
 This repository is a recruitment process for the position of QA Engineer but due to obligations at my current job about new release of app, I didn't manage to send the assignment in the scheduled time so I decided to publish it here in this repository. 
 
-This project was made as my answer to assignment whic I get from company wher I applying for the job ad and the position of QA Engineer. 
+This project was made as my answer to assignment which I get from company where I am applying for the job ad and the position of QA Engineer. 
 
 I spent 4 days on the realization of this project
 
@@ -53,7 +53,7 @@ For __first two test you must solve captcha manually and every test is on hold f
 
 ## Potential Bugs
 ***
-As I haven't read the documentation for the app I tested and I don't have documentation for the app itself, I consider the following things to be potential bugs in the registration process itself:
+As I haven't read the documentation for the app I performed tested, and I consider the following things to be potential bugs in the registration process itself:
 * The possibility of registering several users with the same email address.
    
    __Steps to reproduce__
@@ -84,19 +84,19 @@ As I haven't read the documentation for the app I tested and I don't have docume
    
    Force the user to create a password from a combination of UPPERCASE lowercase letters and at least one special character
   
-* When one of the fields for the password is clicked on the display shows the password of both fields
+* When one of the fields for the password is clicked on the button shows the password of both fields is visible
 
    __Steps to reproduce__
    * fill all fields for registration form
-   * click on show password icon in field password
+   * click on show password button in field password
    
    __Actual Result__
    
-   One of the fields for the password is clicked on the display shows the password of both fields is visible
+   One of the fields for the password is clicked on the button shows the password of both fields is visible
    
    __Expected result__
    
-   Just need to show the password in that field when is click on show password
+   Just need to show the password in that field when is click on show password button
 
 __I say once again that I haven't read the documentation, but in my opinion this is a serious bug.__
 
