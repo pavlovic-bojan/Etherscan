@@ -1,4 +1,4 @@
-# Etherscan
+# Etherscan Automation Java JUnit Selenium
 This repository is a recruitment process for the position of QA Engineer but due to obligations at my current job about new release of app, I didn't manage to send the assignment in the scheduled time so I decided to publish it here in this repository. 
 
 This project was made as my answer to assignment which I get from company where I am applying for the job ad and the position of QA Engineer. 
